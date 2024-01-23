@@ -29,11 +29,12 @@ const addUser = async (req, res) => {
                 firstName: newUser.firstName,
                 lastName: newUser.lastName,
                 email: newUser.email,
-                password: hashedPassword
+                password: hashedPassword,
+                role:'user'
             });
 
             if (user) {
-                var token = jwt.sign({ email: user.email }, "mySecret", {
+                var token = jwt.sign({ email: user.email, role: user.role }, "mySecret", {
                     expiresIn: 86400 // expires in 24 hours
                 });
                 return res.status(200).send({ auth: true, token: token });
@@ -177,7 +178,7 @@ const loginUser = async (req, res) => {
         var passwordIsValid = bcrypt.compareSync(req.body.password, user.password);
         if (!passwordIsValid) return res.status(401).send({ auth: 'Invalid Password' });
 
-        var token = jwt.sign({ email: user.email }, "mySecret", {
+        var token = jwt.sign({ email: user.email, role: user.role }, "mySecret", {
             expiresIn: 86400 // expires in 24 hours
         });
         console.log("Successfully loged in...")
